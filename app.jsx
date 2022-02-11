@@ -1,5 +1,11 @@
 'use strict';
 
+window.onload = demarrer;
+
+function demarrer(){
+    changePage("groupes");
+}
+
 var logged_in = true;
 var musiciens = [];
 var groupes = [];
@@ -27,6 +33,11 @@ for (const item of Object.values(data.Musiciens)){
 for (const item of Object.values(data.Groupes)){
     let dynamicProps = item;
     groupes.push(<LigneGroupe {...dynamicProps} />)
+}
+
+function changePage(sectionName){
+    $('section').css("display","none");
+    $('#' + sectionName).css("display","block");
 }
 
 function LigneMusicien(props){
@@ -85,7 +96,7 @@ function LoginForm(){
                 <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
                 <input type="password" name="password"  className="form-control" id="pwInput"/>
             </div>
-            <button class="btn btn-success" onClick={loginCheck}>Submit</button>
+            <button className="btn btn-success" onClick={loginCheck}>Submit</button>
         </form>
     );
 }
@@ -101,10 +112,8 @@ function loginCheck(){
     })
         .done(function( msg ) {
             if(msg == "Success") {
-                alert("OK");
                 logged_in = true;
             }else{
-                alert("KO")
                 logged_in = false;
             }
     });

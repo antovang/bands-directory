@@ -15,18 +15,19 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Groupes</a>
+                        <a class="nav-link" onclick="changePage('groupes')" href="#">Groupes</a>
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Musiciens</a>
+                        <a class="nav-link" onclick="changePage('musiciens')" href="#">Musiciens</a>
                     </li>
 
                     <li class="nav-item">
                         <?php if(!isset($_SESSION)){ ?>
-                            <button id="logButton" class="btn btn-success">Log in</button>
+                            <a id="logButton" class="btn btn-success" onclick="changePage('login')">Log in</a>
                         <?php }else{ ?>
-                            <button id="logButton" class="btn btn-danger">Log out</button>
+                            <?= $_SESSION ?>
+                            <a id="logButton" class="btn btn-danger">Log out</a>
                         <?php } ?>
                     </li>
                 </ul>
