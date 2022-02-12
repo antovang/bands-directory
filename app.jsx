@@ -2,13 +2,14 @@
 
 window.onload = demarrer;
 
-function demarrer(){
-    changePage("groupes");
-}
-
-var logged_in = true;
+var logged_in;
 var musiciens = [];
 var groupes = [];
+
+const loginContainer = document.querySelector('#loginFormContainer');
+const logBtnContainer = document.querySelector('#logBtnContainer');
+const tableauMusiciensContainer = document.querySelector('#ligneMusicien');
+const tableauGroupesContainer = document.querySelector('#ligneGroupe');
 
 var data = {
     Groupes : [
@@ -25,19 +26,63 @@ var data = {
     ]
 }
 
-for (const item of Object.values(data.Musiciens)){
-    let dynamicProps = item;
-    musiciens.push(<LigneMusicien {...dynamicProps} />)
-}
+function demarrer(){
+    for (const item of Object.values(data.Musiciens)){
+        let dynamicProps = item;
+        musiciens.push(<LigneMusicien {...dynamicProps} />)
+    }
 
-for (const item of Object.values(data.Groupes)){
-    let dynamicProps = item;
-    groupes.push(<LigneGroupe {...dynamicProps} />)
+    for (const item of Object.values(data.Groupes)){
+        let dynamicProps = item;
+        groupes.push(<LigneGroupe {...dynamicProps} />)
+    }
+
+    changePage("groupes");
+    ReactDOM.render(
+        <LoginForm />
+        ,loginContainer);
+
+    ReactDOM.render(
+        <LoginButton />
+        ,logBtnContainer);
+
+    ReactDOM.render(
+        musiciens
+        ,tableauMusiciensContainer);
+
+    ReactDOM.render(
+        groupes
+        ,tableauGroupesContainer);
 }
 
 function changePage(sectionName){
     $('section').css("display","none");
     $('#' + sectionName).css("display","block");
+}
+
+function LoginButton(){
+
+    if(logged_in){
+        return(
+            <button id="logButton" className="btn btn-danger" onClick={logoutAction}>Log out</button>
+        );
+    }else {
+        return (
+            <button id="logButton" className="btn btn-success" onClick={() => changePage('login')}>Log in</button>
+        );
+    }
+}
+
+function logoutAction(){
+    $.get('logout.php')
+        .done(function (msg){
+
+            if(msg  == "Success"){
+                logged_in = false;
+                demarrer();
+            }
+
+        });
 }
 
 function LigneMusicien(props){
@@ -86,7 +131,7 @@ function LigneGroupe(props){
 function LoginForm(){
 
     return (
-        <form id="loginForm" method="post">
+        <form id="loginForm" onSubmit={onSubmitAction}>
             <div className="mb-3">
                 <label htmlFor="exampleInputLogin1" className="form-label">Login</label>
                 <input type="text" name="login" className="form-control" id="loginInput"/>
@@ -96,41 +141,30 @@ function LoginForm(){
                 <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
                 <input type="password" name="password"  className="form-control" id="pwInput"/>
             </div>
-            <button className="btn btn-success" onClick={loginCheck}>Submit</button>
+            <button className="btn btn-success">Submit</button>
         </form>
     );
+}
+
+function onSubmitAction(e){
+    //not reloading page on submit
+    e.preventDefault();
+    loginCheck();
 }
 
 function loginCheck(){
     let login = $('#loginInput').val();
     let pw = $('#pwInput').val();
 
-    $.ajax({
-        method: "POST",
-        url: "script.php",
-        data: { login: login, password: pw }
-    })
-        .done(function( msg ) {
+    $.post('script.php',{ login: login, password: pw })
+    .done(
+        function( msg ) {
             if(msg == "Success") {
                 logged_in = true;
+                demarrer();
             }else{
                 logged_in = false;
             }
     });
 }
 
-const loginContainer = document.querySelector('#loginFormContainer');
-const tableauMusiciensContainer = document.querySelector('#ligneMusicien');
-const tableauGroupesContainer = document.querySelector('#ligneGroupe');
-
-ReactDOM.render(
-    <LoginForm />
-    ,loginContainer);
-
-ReactDOM.render(
-    musiciens
-    ,tableauMusiciensContainer);
-
-ReactDOM.render(
-    groupes
-    ,tableauGroupesContainer);
