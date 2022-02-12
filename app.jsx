@@ -1,6 +1,6 @@
 'use strict';
 
-window.onload = demarrer;
+window.onload = init;
 
 var logged_in;
 var musiciens = [];
@@ -26,7 +26,11 @@ var data = {
     ]
 }
 
-function demarrer(){
+function init(){
+
+    musiciens = [];
+    groupes = [];
+
     for (const item of Object.values(data.Musiciens)){
         let dynamicProps = item;
         musiciens.push(<LigneMusicien {...dynamicProps} />)
@@ -79,7 +83,7 @@ function logoutAction(){
 
             if(msg  == "Success"){
                 logged_in = false;
-                demarrer();
+                init();
             }
 
         });
@@ -161,7 +165,7 @@ function loginCheck(){
         function( msg ) {
             if(msg == "Success") {
                 logged_in = true;
-                demarrer();
+                init();
             }else{
                 logged_in = false;
             }
