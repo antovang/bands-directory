@@ -6,5 +6,5 @@
 
     //destroy the session
     session_destroy();
-    echo "Success";
+    echo true;
 ?>
